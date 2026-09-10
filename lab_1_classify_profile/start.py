@@ -3,7 +3,7 @@ Language detection starter.
 """
 
 # pylint: disable=unused-variable, duplicate-code
-
+from main import calculate_frequencies, get_top_n_words, remove_stop_words, tokenize
 
 def main() -> None:
     """
@@ -20,6 +20,13 @@ def main() -> None:
     result = None
     assert result, "Detection result is None"
 
+    print(tokenize(de_text))
+    print(remove_stop_words(tokenize(de_text), stopwords))
+    print(calculate_frequencies(remove_stop_words(tokenize(de_text), stopwords)))
+    print(get_top_n_words(calculate_frequencies(remove_stop_words(tokenize(de_text), stopwords)), 10))
 
 if __name__ == "__main__":
     main()
+
+
+
