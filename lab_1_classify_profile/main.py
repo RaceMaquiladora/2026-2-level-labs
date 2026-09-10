@@ -11,24 +11,38 @@ FreqDictType = dict[str, float]
 "Frequency dictionary. Contains pairs of token and its frequency."
 ProfileType = tuple[str, FreqDictType, int]
 "Language profile of a text. Contains language name, frequency dictionary and number of tokens."
+
+
+
 # Mark 4.
-
-
 def tokenize(text: str) -> Sequence[str] | None:
-    """
-    Splits a text into tokens, converts the tokens into lowercase,
-    removes punctuation and other symbols from words
+    tokens = []
+    if type(text) != str:
+        return None
+    else:
+        banletters = "!'@#$%^&*()-+1234567890[]{};:,./<>?|`~=_"
+        text = text.lower()
+        text = text.replace("'",'').replace('-','')
+        for letter in banletters:
+            text = text.replace(letter, " ")
+        tokens = text.split()
+        return tokens
 
-    Args:
-       text (str): Text
-
-    Returns:
-        Sequence[str] | None: Sequence of lower-cased tokens without punctuation.
-        Returns None if input text is not a string.
-    """
 
 
 def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Sequence[str] | None:
+    if type(tokens) != list or type(stop_words) != list:
+        return None
+    else:
+        stops = []
+        result = []
+        for word in stop_words:
+            stops.append(word)
+        for token in tokens:
+            if token not in stops:
+                result.append(token)
+        return result
+
     """
     Removes stop words
 
@@ -230,7 +244,7 @@ def collect_profiles(paths_to_profiles: Sequence[str]) -> Sequence[ProfileType] 
     """
 
 
-def detect_language_advanced(
+'''def detect_language_advanced(
     unknown_profile: ProfileType, known_profiles: Sequence[ProfileType], top_n: int
 ) -> Sequence[tuple[str, dict[str, float]]] | None:
     """
@@ -263,5 +277,4 @@ def print_report(
         top_n (int): Number of popular words
 
     In case of incorrect type inputs, does not print anything.
-    """
-print("Lab 1. Language detection")
+    """'''
