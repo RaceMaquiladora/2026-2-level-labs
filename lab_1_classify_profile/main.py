@@ -11,10 +11,9 @@ FreqDictType = dict[str, float]
 "Frequency dictionary. Contains pairs of token and its frequency."
 ProfileType = tuple[str, FreqDictType, int]
 "Language profile of a text. Contains language name, frequency dictionary and number of tokens."
-
-
-
 # Mark 4.
+
+
 def tokenize(text: str) -> Sequence[str] | None:
     if type(text) is not str:
         return None
@@ -231,7 +230,7 @@ def collect_profiles(paths_to_profiles: Sequence[str]) -> Sequence[ProfileType] 
     """
 
 
-'''def detect_language_advanced(
+def detect_language_advanced(
     unknown_profile: ProfileType, known_profiles: Sequence[ProfileType], top_n: int
 ) -> Sequence[tuple[str, dict[str, float]]] | None:
     """
@@ -264,4 +263,4 @@ def print_report(
         top_n (int): Number of popular words
 
     In case of incorrect type inputs, does not print anything.
-    """'''
+    """
