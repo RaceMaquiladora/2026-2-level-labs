@@ -54,18 +54,16 @@ def remove_stop_words(tokens: Sequence[str], stop_words: Sequence[str]) -> Seque
 
     if isinstance(tokens,list) is False or isinstance(stop_words,list) is False:
         return None
+
     for check in tokens:
         if isinstance(check,str) is False:
             return None
+
     for check in stop_words:
         if isinstance(check,str) is False:
             return None
 
-    checked_tokens = []
-
-    for token in tokens:
-        if token not in stop_words:
-            checked_tokens.append(token)
+    checked_tokens = [token for token in tokens if token not in stop_words]
 
     return checked_tokens
 
@@ -80,16 +78,17 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         Returns None in case of incorrect input types.
     """
 
-    if not isinstance(tokens, list):
+    if isinstance(tokens, list) is False:
         return None
+
     for token in tokens:
-        if not isinstance(token, str):
+        if isinstance(token, str) is False:
             return None
 
     freq_dict = FreqDictType()
 
     for token in tokens:
-        if token in freq_dict:
+        if token in freq_dict.keys():
             freq_dict[token] += 1
         else:
             freq_dict[token] = 1
@@ -111,10 +110,14 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         Sequence[str] | None: Sequence of the most common words.
         Returns None in case of incorrect input types or non-positive top_n.
     """
-    if not isinstance(freq_dict, dict) or not isinstance(top_n, int) or top_n <= 0:
+    if isinstance(freq_dict, dict) is False or isinstance(top_n, int) is False or top_n <= 0:
         return None
 
-    items_sorted = sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)
+    for key, value in freq_dict.items():
+        if isinstance(key, str) is False or isinstance(value, float) is False:
+            return None
+
+    items_sorted = (sorted(freq_dict.items(), key=lambda x: (-x[1], x[0])))
 
     top_words = [word for word, _ in items_sorted[:top_n]]
 
