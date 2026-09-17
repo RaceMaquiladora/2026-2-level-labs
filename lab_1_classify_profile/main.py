@@ -142,7 +142,25 @@ def create_language_profile(
         ProfileType | None: Language profile.
         Returns None in case of incorrect input types.
     """
+    if isinstance(language, str) is False or isinstance(text, str) is False or isinstance(stop_words, list) is False:
+            return None
 
+    for word in stop_words:
+        if isinstance(word, str) is False:
+            return None
+
+    Profile = ProfileType()
+
+    profile_tokens = tokenize(text)
+    profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
+    profile_freq_dict = calculate_frequencies(profile_tokens_without_stopwords)
+
+    if profile_tokens is None or profile_tokens_without_stopwords is None or profile_freq_dict is None:
+        return None
+
+    Profile = (language, profile_freq_dict, len(profile_freq_dict))
+
+    return Profile
 
 def check_profile(profile: ProfileType) -> bool:
     """
@@ -155,7 +173,19 @@ def check_profile(profile: ProfileType) -> bool:
         bool: Returns True if the profile has right structure and types,
         otherwise returns False.
     """
+    if isinstance(profile, tuple) is False or len(profile) != 3:
+        return False
 
+    language, freq_dict, word_count = profile
+
+    if isinstance(language, str) is False or isinstance(freq_dict, dict) is False or isinstance(word_count, int) is False:
+        return False
+
+    for key, value in freq_dict.items():
+        if isinstance(key, str) is False or isinstance(value, float) is False:
+            return False
+
+    return True
 
 def compare_profiles_by_top_n(
     unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
@@ -171,6 +201,19 @@ def compare_profiles_by_top_n(
         float | None: The distance between profiles.
         Returns None in case of incorrect input types.
     """
+    if isinstance(unknown_profile, tuple) is False or isinstance(profile_to_compare, tuple) is False or isinstance(top_n, int) is False or top_n <= 0:
+        return None
+
+    unknown_profile_1 = check_profile(unknown_profile)
+    profile_to_compare_1 = check_profile(profile_to_compare)
+
+    if unknown_profile_1 is False or profile_to_compare_1 is False:
+        return None
+
+    part
+
+
+
 
 
 def detect_language_by_top_n(
