@@ -117,7 +117,7 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
         if isinstance(key, str) is False or isinstance(value, float) is False:
             return None
 
-    items_sorted = (sorted(freq_dict.items(), key=lambda x: (-x[1])))
+    items_sorted = (sorted(freq_dict.items(), key=lambda x: (-x[1],x[0])))
 
     top_words = [word for word, _ in items_sorted[:top_n]]
 

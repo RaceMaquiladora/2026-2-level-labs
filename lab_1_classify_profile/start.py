@@ -21,10 +21,11 @@ def main() -> None:
     tokens_without_stopwords = remove_stop_words(tokens, stopwords)
     freq_dict = calculate_frequencies(tokens_without_stopwords)
     result = get_top_n_words(freq_dict, 7)
+    print(f"Top 7 words in German text: {result}")
     assert result, "Detection result is None"
 
 if __name__ == "__main__":
     main()
 
-print(main())
+
 

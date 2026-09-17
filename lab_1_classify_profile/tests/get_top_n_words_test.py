@@ -30,10 +30,10 @@ def test_get_top_n_words_same_frequency() -> None:
     """
     Get top number of words with the same frequency check
     """
-    expected = ["happy", "man", "hello"]
+    expected = ["happy", "hello", "man"]
     actual = get_top_n_words({"happy": 0.2, "man": 0.2, "hello": 0.2}, 3)
     assert expected == actual
-    expected = ["man"]
+    expected = ["happy"]
     actual = get_top_n_words({"man": 0.2, "happy": 0.2, "hello": 0.2}, 1)
     assert expected == actual
 
