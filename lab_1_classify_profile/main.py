@@ -188,8 +188,8 @@ def check_profile(profile: ProfileType) -> bool:
     return True
 
 def compare_profiles_by_top_n(
-    unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
-) -> float | None:
+        unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
+        ) -> float | None:
     """
     Compares profiles and calculates the distance using top n words
 
@@ -204,13 +204,20 @@ def compare_profiles_by_top_n(
     if isinstance(unknown_profile, tuple) is False or isinstance(profile_to_compare, tuple) is False or isinstance(top_n, int) is False or top_n <= 0:
         return None
 
-    unknown_profile_1 = check_profile(unknown_profile)
-    profile_to_compare_1 = check_profile(profile_to_compare)
-
-    if unknown_profile_1 is False or profile_to_compare_1 is False:
+    if any(check_profile(unknown_profile), check_profile(profile_to_compare)) is False:
         return None
 
-    part
+    top_n_words_unknown = get_top_n_words(unknown_profile[1], top_n)
+
+    top_n_words_compare = get_top_n_words(profile_to_compare[1], top_n)
+
+    formula = (top_n_words_unknown and top_n_words_compare)/len(top_n_words_unknown)
+
+    return formula
+
+
+
+
 
 
 
