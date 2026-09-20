@@ -85,7 +85,7 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         if isinstance(token, str) is False:
             return None
 
-    freq_dict = FreqDictType()
+    freq_dict = dict()
 
     for token in tokens:
         if token in freq_dict.keys():
@@ -188,8 +188,8 @@ def check_profile(profile: ProfileType) -> bool:
     return True
 
 def compare_profiles_by_top_n(
-        unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
-        ) -> float | None:
+    unknown_profile: ProfileType, profile_to_compare: ProfileType, top_n: int
+) -> float | None:
     """
     Compares profiles and calculates the distance using top n words
 
