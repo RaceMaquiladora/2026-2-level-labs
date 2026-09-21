@@ -281,7 +281,26 @@ def calculate_mse(predicted: Sequence[float], actual: Sequence[float]) -> float 
         Returns None in case of incorrect input types or mismatched length.
         In case of empty inputs, returns 0.0.
     """
+    if not isinstance(predicted, (list, tuple)) or not isinstance(actual, (list, tuple)):
+        return None
 
+    for x in predicted:
+        if not isinstance(x, (int, float)):
+            return None
+
+    for x in actual:
+        if not isinstance(x, (int, float)):
+            return None
+
+    if len(predicted) != len(actual):
+        return None
+
+    if len(predicted) == 0:
+        return 0.0
+
+    difference = [(p - a) ** 2 for p in predicted for a in actual]
+    mse = sum(difference) / len(difference)
+    return mse
 
 def compare_profiles_by_mse(
     unknown_profile: ProfileType, profile_to_compare: ProfileType
@@ -298,6 +317,20 @@ def compare_profiles_by_mse(
         float | None: The distance between the profiles.
         In case of corrupt input arguments or invalid profile structure, None is returned.
     """
+    if not all([check_profile(unknown_profile), check_profile(profile_to_compare)]):
+        return None
+
+
+    predicted = unknown_profile[1]
+    actual = profile_to_compare[1]
+
+
+
+    calculated_mse =
+
+    return calculated_mse
+
+
 
 
 def detect_language_by_mse(
