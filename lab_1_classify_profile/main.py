@@ -201,27 +201,30 @@ def compare_profiles_by_top_n(
         float | None: The distance between profiles.
         Returns None in case of incorrect input types.
     """
-    if isinstance(unknown_profile, tuple) is False or isinstance(profile_to_compare, tuple) is False or isinstance(top_n, int) is False or top_n <= 0:
+
+    if not all([check_profile(unknown_profile), check_profile(profile_to_compare)]):
         return None
 
-    if any(check_profile(unknown_profile), check_profile(profile_to_compare)) is False:
+    if isinstance(top_n, int) is False or top_n <= 0:
         return None
 
     top_n_words_unknown = get_top_n_words(unknown_profile[1], top_n)
+    if top_n_words_unknown is None:
+        return None
 
     top_n_words_compare = get_top_n_words(profile_to_compare[1], top_n)
+    if top_n_words_compare is None:
+        return None
 
-    formula = (top_n_words_unknown and top_n_words_compare)/len(top_n_words_unknown)
+    common_words = [word for word in top_n_words_unknown if word in top_n_words_compare]
 
-    return formula
+    count_common = len(common_words) if common_words is not None else 0
 
+    count_unknown = len(top_n_words_unknown) if top_n_words_unknown is not None else 0
 
+    result =count_common / count_unknown
 
-
-
-
-
-
+    return result
 
 def detect_language_by_top_n(
     unknown_profile: ProfileType, profile_1: ProfileType, profile_2: ProfileType, top_n: int
@@ -238,11 +241,32 @@ def detect_language_by_top_n(
     Returns:
         str | None: Unknown profile language.
         Returns None in case of incorrect input types.
-    """
+        """
 
+    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]):
+        return None
+
+    if isinstance(top_n, int) is False or top_n <= 0:
+        return None
+
+    count_1 = compare_profiles_by_top_n(unknown_profile, profile_1, top_n)
+
+    count_2 = compare_profiles_by_top_n(unknown_profile, profile_2, top_n)
+
+    if count_1 is None or count_2 is None:
+        return None
+
+    if count_1 > count_2:
+        return profile_1[0]
+    elif count_2 > count_1:
+        return profile_2[0]
+    elif count_1 == count_2:
+        sorted_profiles = sorted([profile_1[0], profile_2[0]])
+        return sorted_profiles[0]
+    else:
+        return "Unknown"
 
 # Mark 8
-
 
 def calculate_mse(predicted: Sequence[float], actual: Sequence[float]) -> float | None:
     """
