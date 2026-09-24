@@ -8,7 +8,7 @@ from main import (
         tokenize,
         create_language_profile,
         detect_language_by_top_n,
-        calculate_mse,
+        detect_language_by_mse
     )
 
 # pylint: disable=unused-variable, duplicate-code
@@ -44,8 +44,12 @@ def main() -> None:
     print(result)
 
     # Практическое задание mark 8
-
-
+    result = detect_language_by_mse(
+        unknown_profile,
+        en_profile,
+        de_profile,
+    )
+    print(result)
 
     assert result, "Detection result is None"
 

@@ -137,7 +137,7 @@ def create_language_profile(
         ProfileType | None: Language profile.
         Returns None in case of incorrect input types.
     """
-    if isinstance(language, str) is False or isinstance(text, str) is False or isinstance(stop_words, list) is False:
+    if all([isinstance(language, str), isinstance(text, str), isinstance(stop_words, list)]) is False:
         return None
 
     for word in stop_words:
@@ -150,7 +150,11 @@ def create_language_profile(
     profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
     profile_freq_dict = calculate_frequencies(profile_tokens_without_stopwords)
 
-    if profile_tokens is None or profile_tokens_without_stopwords is None or profile_freq_dict is None:
+    if profile_tokens is None:
+        return None
+    if profile_tokens_without_stopwords is None:
+        return None
+    if profile_freq_dict is None:
         return None
 
     Profile = (language, profile_freq_dict, len(profile_freq_dict))
@@ -348,12 +352,13 @@ def detect_language_by_mse(
         return None
 
     if mse_1 < mse_2:
-        return profile_1[0]
-    if mse_2 < mse_1:
-        return profile_2[0]
-    if mse_1 == mse_2:
+        result = profile_1[0]
+    elif mse_2 < mse_1:
+        result =  profile_2[0]
+    elif mse_1 == mse_2:
         sorted_profiles = sorted([profile_1[0], profile_2[0]])
-        return sorted_profiles[0]
+        result = sorted_profiles[0]
+    return result
 
 # Mark 10
 
