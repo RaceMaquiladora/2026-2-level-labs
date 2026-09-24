@@ -49,11 +49,14 @@ def main() -> None:
     de_profile = create_language_profile("de", de_text, stopwords)
     en_profile = create_language_profile("en", en_text, stopwords)
     unknown_profile = create_language_profile("unknown", unknown_text, stopwords)
-    if any([de_profile, en_profile, unknown_profile]) is None:
+    if (de_profile is None
+        or en_profile is None
+        or unknown_profile is None
+    ):
         return
 
     result = detect_language_by_top_n(unknown_profile, de_profile, en_profile, 15)
-    if isinstance(detect_language_by_mse,tuple) is False:
+    if isinstance(result,tuple) is False:
         return
     print(result)
 
