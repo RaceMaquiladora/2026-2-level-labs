@@ -137,7 +137,13 @@ def create_language_profile(
         ProfileType | None: Language profile.
         Returns None in case of incorrect input types.
     """
-    if all([isinstance(language, str), isinstance(text, str), isinstance(stop_words, list)]) is False:
+    if not all(
+        [
+            isinstance(language, str),
+            isinstance(text, str),
+            isinstance(stop_words, list)
+        ]
+    ):
         return None
 
     for word in stop_words:
@@ -177,7 +183,13 @@ def check_profile(profile: ProfileType) -> bool:
 
     language, freq_dict, word_count = profile
 
-    if all([isinstance(language, str), isinstance(freq_dict, dict), isinstance(word_count, int)]) is False:
+    if not all(
+        [
+            isinstance(language, str),
+            isinstance(freq_dict, dict),
+            isinstance(word_count, int),
+        ]
+    ):
         return False
 
     for key, value in freq_dict.items():
@@ -242,7 +254,10 @@ def detect_language_by_top_n(
         Returns None in case of incorrect input types.
     """
 
-    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]):
+    if not all([check_profile(profile_1), check_profile(profile_2)]):
+        return None
+
+    if check_profile(unknown_profile) is False:
         return None
 
     if isinstance(top_n, int) is False or top_n <= 0:
@@ -346,9 +361,13 @@ def detect_language_by_mse(
         str | None: Unknown profile language.
         Returns None in case of incorrect input types.
     """
-    if all(
-        [check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]
-    ) is False:
+    if not all(
+        [
+            check_profile(unknown_profile),
+            check_profile(profile_1),
+            check_profile(profile_2)
+        ]
+    ):
         return None
 
     result = None
