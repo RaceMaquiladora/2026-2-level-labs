@@ -319,6 +319,8 @@ def calculate_mse(predicted: Sequence[float], actual: Sequence[float]) -> float 
 
     difference = [(p - a) ** 2 for p in predicted for a in actual]
 
+    mse = 0.0
+
     mse = sum(difference) / len(difference)
 
     return mse

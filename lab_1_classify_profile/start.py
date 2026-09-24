@@ -31,8 +31,17 @@ def main() -> None:
 
     # Практическое задание mark 4
     tokens = tokenize(de_text)
+    if tokens in None:
+        return None
+
     tokens_without_stopwords = remove_stop_words(tokens, stopwords)
+    if tokens_without_stopwords is None:
+        return None
+
     freq_dict = calculate_frequencies(tokens_without_stopwords)
+    if freq_dict is None:
+        return None
+
     result = get_top_n_words(freq_dict, 7)
     print(result)
 
@@ -40,6 +49,9 @@ def main() -> None:
     de_profile = create_language_profile("de", de_text, stopwords)
     en_profile = create_language_profile("en", en_text, stopwords)
     unknown_profile = create_language_profile("unknown", unknown_text, stopwords)
+    if any([de_profile, en_profile, unknown_profile]) is None:
+        return None
+
     result = detect_language_by_top_n(unknown_profile, de_profile, en_profile, 15)
     print(result)
 
