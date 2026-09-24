@@ -144,7 +144,7 @@ def create_language_profile(
         if isinstance(word, str) is False:
             return None
 
-    language_Profile = ProfileType()
+    profile = ProfileType()
 
     profile_tokens = tokenize(text)
     profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
@@ -157,9 +157,9 @@ def create_language_profile(
     if profile_freq_dict is None:
         return None
 
-    language_Profile = (language, profile_freq_dict, len(profile_freq_dict))
+    profile = (language, profile_freq_dict, len(profile_freq_dict))
 
-    return language_Profile
+    return profile
 
 def check_profile(profile: ProfileType) -> bool:
     """
@@ -242,8 +242,13 @@ def detect_language_by_top_n(
         Returns None in case of incorrect input types.
     """
 
-    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]) or isinstance(top_n, int) is False or top_n <= 0 :
+    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]):
         return None
+
+    if isinstance(top_n, int) is False or top_n <= 0:
+        return None
+
+    result = None
 
     count_1 = compare_profiles_by_top_n(unknown_profile, profile_1, top_n)
 
@@ -253,14 +258,16 @@ def detect_language_by_top_n(
         return None
 
     if count_1 > count_2:
-        return profile_1[0]
-    if count_2 > count_1:
-        return profile_2[0]
-    if count_1 == count_2:
+        result = profile_1[0]
+    elif count_2 > count_1:
+        result = profile_2[0]
+    elif count_1 == count_2:
         sorted_profiles = sorted([profile_1[0], profile_2[0]])
-        return sorted_profiles[0]
+        result = sorted_profiles[0]
 
-    return "Unknown"
+    return result
+
+
 
 # Mark 8
 
@@ -339,8 +346,12 @@ def detect_language_by_mse(
         str | None: Unknown profile language.
         Returns None in case of incorrect input types.
     """
-    if all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]) is False:
+    if all(
+        [check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]
+    ) is False:
         return None
+
+    result = None
 
     mse_1 = compare_profiles_by_mse(unknown_profile, profile_1)
     mse_2 = compare_profiles_by_mse(unknown_profile, profile_2)
@@ -350,12 +361,14 @@ def detect_language_by_mse(
 
     if mse_1 < mse_2:
         result = profile_1[0]
-    elif mse_2 < mse_1:
-        result =  profile_2[0]
-    elif mse_1 == mse_2:
+    if mse_2 < mse_1:
+        result = profile_2[0]
+    if mse_1 == mse_2:
         sorted_profiles = sorted([profile_1[0], profile_2[0]])
-        result = sorted_profiles[0]
+        result =  sorted_profiles[0]
+
     return result
+
 
 # Mark 10
 
