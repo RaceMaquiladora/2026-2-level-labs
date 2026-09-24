@@ -2,7 +2,7 @@
 Language detection starter.
 """
 
-
+# pylint: disable=unused-variable, duplicate-code
 from lab_1_classify_profile.main import (
     calculate_frequencies,
     create_language_profile,
@@ -11,9 +11,7 @@ from lab_1_classify_profile.main import (
     get_top_n_words,
     remove_stop_words,
     tokenize,
-    )
-
-# pylint: disable=unused-variable, duplicate-code
+)
 
 
 def main() -> None:
@@ -55,6 +53,8 @@ def main() -> None:
         return
 
     result = detect_language_by_top_n(unknown_profile, de_profile, en_profile, 15)
+    if isinstance(detect_language_by_mse,tuple) is False:
+        return
     print(result)
 
     # Практическое задание mark 8
@@ -63,6 +63,9 @@ def main() -> None:
         en_profile,
         de_profile,
     )
+    if isinstance(result,tuple) is False:
+        return
+
     print(result)
 
     assert result, "Detection result is None"
