@@ -11,8 +11,8 @@ FreqDictType = dict[str, float]
 "Frequency dictionary. Contains pairs of token and its frequency."
 ProfileType = tuple[str, FreqDictType, int]
 "Language profile of a text. Contains language name, frequency dictionary and number of tokens."
-# Mark 4.
 
+# Mark 4.
 
 def tokenize(text: str) -> Sequence[str] | None:
     """
@@ -33,8 +33,8 @@ def tokenize(text: str) -> Sequence[str] | None:
     text = text.lower()
 
     for word in text:
-            if not word.isalpha() and not word.isspace():
-                text = text.replace(word, "")
+        if not word.isalpha() and not word.isspace():
+            text = text.replace(word, "")
 
     tokens = text.split()
 
@@ -89,12 +89,9 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
 
     for token in tokens:
         if token in freq_dict.keys():
-            freq_dict[token] += 1
+            freq_dict[token] += 1 / len(tokens)
         else:
-            freq_dict[token] = 1
-
-    for key in freq_dict.keys():
-        freq_dict[key] = freq_dict[key] / len(tokens)
+            freq_dict[token] = 1 / len(tokens)
 
     return freq_dict
 
@@ -123,9 +120,7 @@ def get_top_n_words(freq_dict: dict[str, float], top_n: int) -> Sequence[str] | 
 
     return top_words
 
-
 # Mark 6.
-
 
 def create_language_profile(
     language: str, text: str, stop_words: Sequence[str]
@@ -143,7 +138,7 @@ def create_language_profile(
         Returns None in case of incorrect input types.
     """
     if isinstance(language, str) is False or isinstance(text, str) is False or isinstance(stop_words, list) is False:
-            return None
+        return None
 
     for word in stop_words:
         if isinstance(word, str) is False:
@@ -178,11 +173,11 @@ def check_profile(profile: ProfileType) -> bool:
 
     language, freq_dict, word_count = profile
 
-    if isinstance(language, str) is False or isinstance(freq_dict, dict) is False or isinstance(word_count, int) is False:
+    if all([isinstance(language, str), isinstance(freq_dict, dict), isinstance(word_count, int)]) is False:
         return False
 
     for key, value in freq_dict.items():
-        if isinstance(key, str) is False or isinstance(value, float) is False:
+        if all([isinstance(key, str),isinstance(value, float)]) is False:
             return False
 
     return True
@@ -241,7 +236,7 @@ def detect_language_by_top_n(
     Returns:
         str | None: Unknown profile language.
         Returns None in case of incorrect input types.
-        """
+    """
 
     if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]):
         return None
@@ -258,13 +253,13 @@ def detect_language_by_top_n(
 
     if count_1 > count_2:
         return profile_1[0]
-    elif count_2 > count_1:
+    if count_2 > count_1:
         return profile_2[0]
-    elif count_1 == count_2:
+    if count_1 == count_2:
         sorted_profiles = sorted([profile_1[0], profile_2[0]])
         return sorted_profiles[0]
-    else:
-        return "Unknown"
+
+    return "Unknown"
 
 # Mark 8
 
@@ -320,18 +315,12 @@ def compare_profiles_by_mse(
     if not all([check_profile(unknown_profile), check_profile(profile_to_compare)]):
         return None
 
+    predicted = [unknown_profile[1].get(word, 0.0) for word in profile_to_compare[1].keys()]
+    actual = [profile_to_compare[1][word] for word in profile_to_compare[1].keys()]
 
-    predicted = unknown_profile[1]
-    actual = profile_to_compare[1]
-
-
-
-    calculated_mse =
+    calculated_mse = calculate_mse(predicted, actual)
 
     return calculated_mse
-
-
-
 
 def detect_language_by_mse(
     unknown_profile: ProfileType, profile_1: ProfileType, profile_2: ProfileType
@@ -349,10 +338,24 @@ def detect_language_by_mse(
         str | None: Unknown profile language.
         Returns None in case of incorrect input types.
     """
+    if all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]) is False:
+        return None
 
+    mse_1 = compare_profiles_by_mse(unknown_profile, profile_1)
+    mse_2 = compare_profiles_by_mse(unknown_profile, profile_2)
+
+    if mse_1 is None or mse_2 is None:
+        return None
+
+    if mse_1 < mse_2:
+        return profile_1[0]
+    if mse_2 < mse_1:
+        return profile_2[0]
+    if mse_1 == mse_2:
+        sorted_profiles = sorted([profile_1[0], profile_2[0]])
+        return sorted_profiles[0]
 
 # Mark 10
-
 
 def save_profile(profile: ProfileType, save_path: str) -> bool:
     """
