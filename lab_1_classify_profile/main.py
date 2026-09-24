@@ -150,16 +150,17 @@ def create_language_profile(
         if isinstance(word, str) is False:
             return None
 
-    profile = ProfileType()
+    profile = tuple()
 
     profile_tokens = tokenize(text)
-    profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
-    profile_freq_dict = calculate_frequencies(profile_tokens_without_stopwords)
-
     if profile_tokens is None:
         return None
+
+    profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
     if profile_tokens_without_stopwords is None:
         return None
+
+    profile_freq_dict = calculate_frequencies(profile_tokens_without_stopwords)
     if profile_freq_dict is None:
         return None
 
@@ -317,7 +318,9 @@ def calculate_mse(predicted: Sequence[float], actual: Sequence[float]) -> float 
         return 0.0
 
     difference = [(p - a) ** 2 for p in predicted for a in actual]
+
     mse = sum(difference) / len(difference)
+
     return mse
 
 def compare_profiles_by_mse(
