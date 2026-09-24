@@ -85,10 +85,10 @@ def calculate_frequencies(tokens: Sequence[str]) -> dict[str, float] | None:
         if isinstance(token, str) is False:
             return None
 
-    freq_dict = dict()
+    freq_dict = {}
 
     for token in tokens:
-        if token in freq_dict.keys():
+        if token in freq_dict:
             freq_dict[token] += 1 / len(tokens)
         else:
             freq_dict[token] = 1 / len(tokens)
@@ -144,7 +144,7 @@ def create_language_profile(
         if isinstance(word, str) is False:
             return None
 
-    Profile = ProfileType()
+    language_Profile = ProfileType()
 
     profile_tokens = tokenize(text)
     profile_tokens_without_stopwords = remove_stop_words(profile_tokens, stop_words)
@@ -157,9 +157,9 @@ def create_language_profile(
     if profile_freq_dict is None:
         return None
 
-    Profile = (language, profile_freq_dict, len(profile_freq_dict))
+    language_Profile = (language, profile_freq_dict, len(profile_freq_dict))
 
-    return Profile
+    return language_Profile
 
 def check_profile(profile: ProfileType) -> bool:
     """
@@ -242,10 +242,7 @@ def detect_language_by_top_n(
         Returns None in case of incorrect input types.
     """
 
-    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]):
-        return None
-
-    if isinstance(top_n, int) is False or top_n <= 0:
+    if not all([check_profile(unknown_profile), check_profile(profile_1), check_profile(profile_2)]) or isinstance(top_n, int) is False or top_n <= 0 :
         return None
 
     count_1 = compare_profiles_by_top_n(unknown_profile, profile_1, top_n)
