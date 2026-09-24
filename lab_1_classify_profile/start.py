@@ -1,6 +1,8 @@
 """
 Language detection starter.
 """
+
+
 from lab_1_classify_profile.main import (
     calculate_frequencies,
     create_language_profile,

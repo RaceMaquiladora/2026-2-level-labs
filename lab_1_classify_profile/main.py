@@ -304,17 +304,17 @@ def calculate_mse(predicted: Sequence[float], actual: Sequence[float]) -> float 
         return None
 
     for x in predicted:
-        if not isinstance(x, (int, float)):
+        if not isinstance(x,float):
             return None
 
     for x in actual:
-        if not isinstance(x, (int, float)):
+        if not isinstance(x,float):
             return None
 
     if len(predicted) != len(actual):
         return None
 
-    if len(predicted) == 0:
+    if len(predicted) == 0 or len(actual) == 0:
         return 0.0
 
     difference = [(p - a) ** 2 for p in predicted for a in actual]
