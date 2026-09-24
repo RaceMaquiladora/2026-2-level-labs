@@ -2,13 +2,13 @@
 Language detection starter.
 """
 from lab_1_classify_profile.main import (
-        calculate_frequencies,
-        get_top_n_words,
-        remove_stop_words,
-        tokenize,
-        create_language_profile,
-        detect_language_by_top_n,
-        detect_language_by_mse
+    calculate_frequencies,
+    create_language_profile,
+    detect_language_by_mse,
+    detect_language_by_top_n,
+    get_top_n_words,
+    remove_stop_words,
+    tokenize,
     )
 
 # pylint: disable=unused-variable, duplicate-code
@@ -31,16 +31,16 @@ def main() -> None:
 
     # Практическое задание mark 4
     tokens = tokenize(de_text)
-    if tokens in None:
-        return None
+    if tokens is None:
+        return
 
     tokens_without_stopwords = remove_stop_words(tokens, stopwords)
     if tokens_without_stopwords is None:
-        return None
+        return
 
     freq_dict = calculate_frequencies(tokens_without_stopwords)
     if freq_dict is None:
-        return None
+        return
 
     result = get_top_n_words(freq_dict, 7)
     print(result)
@@ -50,7 +50,7 @@ def main() -> None:
     en_profile = create_language_profile("en", en_text, stopwords)
     unknown_profile = create_language_profile("unknown", unknown_text, stopwords)
     if any([de_profile, en_profile, unknown_profile]) is None:
-        return None
+        return
 
     result = detect_language_by_top_n(unknown_profile, de_profile, en_profile, 15)
     print(result)
