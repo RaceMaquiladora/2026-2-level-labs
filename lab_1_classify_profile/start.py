@@ -29,7 +29,7 @@ def main() -> None:
         en_text = file.read()
     result = None
 
-    # Практическое задание mark 4
+    # mark 4
     tokens = tokenize(de_text)
     if tokens is None:
         return
@@ -42,10 +42,10 @@ def main() -> None:
     if freq_dict is None:
         return
 
-    result = get_top_n_words(freq_dict, 7)
+    result= get_top_n_words(freq_dict, 7)
     print(result)
 
-    # Практическое задание mark 6
+    # mark 6
     de_profile = create_language_profile("de", de_text, stopwords)
     en_profile = create_language_profile("en", en_text, stopwords)
     unknown_profile = create_language_profile("unknown", unknown_text, stopwords)
@@ -56,17 +56,17 @@ def main() -> None:
         return
 
     result = detect_language_by_top_n(unknown_profile, de_profile, en_profile, 15)
-    if isinstance(result,tuple) is False:
+    if result is None:
         return
     print(result)
 
-    # Практическое задание mark 8
+    # mark 8
     result = detect_language_by_mse(
         unknown_profile,
         en_profile,
         de_profile,
     )
-    if isinstance(result,tuple) is False:
+    if result is None:
         return
 
     print(result)
