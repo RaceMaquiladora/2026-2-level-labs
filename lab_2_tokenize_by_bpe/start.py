@@ -35,7 +35,7 @@ def main() -> None:
     print(result_4)
 
     #mark 6
-    machine_train = train(result, 100)
+    machine_train = train(result_4, 100)
     assert machine_train, "Training not working"
     vocabulary = get_vocabulary(machine_train,'<unk>')
     assert vocabulary, "Vocabulary not working"

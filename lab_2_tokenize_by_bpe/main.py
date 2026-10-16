@@ -136,7 +136,8 @@ def merge_tokens(
     if (
         not isinstance(word_frequencies, dict)
         or not all(isinstance(word, tuple) and isinstance(freq, int) for word, freq in word_frequencies.items())
-        or not isinstance(pair, tuple) or len(pair) != 2 or not all(isinstance(token, str) for token in pair)
+        or not isinstance(pair, tuple) or len(pair) != 2
+        or not all(isinstance(token, str) for token in pair)
     ):
         return None
 
@@ -182,7 +183,8 @@ def train(
     if(
         not isinstance(word_frequencies, dict)
         or not isinstance(num_merges, int)
-        or not all(isinstance(word, tuple) and isinstance(freq, int) for word, freq in word_frequencies.items())
+        or not all(isinstance(word, tuple)
+        and isinstance(freq, int) for word, freq in word_frequencies.items())
         or not all(isinstance(token, str) for word in word_frequencies.keys() for token in word)
     ):
         return None
@@ -235,7 +237,8 @@ def get_vocabulary(
     if(
         not isinstance(word_frequencies, dict)
         or not isinstance(unknown_token, str)
-        or not all(isinstance(word, tuple) and isinstance(freq, int) for word, freq in word_frequencies.items())
+        or not all(isinstance(word, tuple)
+        and isinstance(freq, int) for word, freq in word_frequencies.items())
         or not all(isinstance(token, str) for word in word_frequencies.keys() for token in word)
     ):
         return None
@@ -282,12 +285,16 @@ def decode(
         not isinstance(encoded_text, list)
         or not all(isinstance(token, int) for token in encoded_text)
         or not isinstance(vocabulary, dict)
-        or not all(isinstance(token, str) and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
-        or not isinstance(end_of_word_token, (str, type(None)))
     ):
         return None
 
-    if encoded_text is None or vocabulary is None:
+    if (
+        encoded_text is None
+        or vocabulary is None
+        or not all(isinstance(token, str)
+        and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
+        or not isinstance(end_of_word_token, (str, type(None)))
+    ):
         return None
 
 
@@ -327,7 +334,8 @@ def tokenize_word(
         not isinstance(word, tuple)
         or not all(isinstance(token, str) for token in word)
         or not isinstance(vocabulary, dict)
-        or not all(isinstance(token, str) and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
+        or not all(isinstance(token, str)
+        and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
     ):
         return None
 
