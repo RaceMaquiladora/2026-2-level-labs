@@ -195,7 +195,14 @@ def train(
         if not freq_pairs:
             break
 
-        sorted_freq_pairs = sorted(freq_pairs.items(), key=lambda x: (-x[1], -len(x[0][0] + x[0][1]), x[0][0] + x[0][1]))
+        sorted_freq_pairs = sorted(
+            freq_pairs.items(),
+            key=lambda x: (
+                -x[1],
+                -len(x[0][0] + x[0][1]),
+                x[0][0] + x[0][1]
+            )
+        )
 
         sorted_word_frequencies = merge_tokens(word_frequencies, sorted_freq_pairs[0][0])
 
@@ -291,10 +298,10 @@ def decode(
     symbols = []
     for token_id in encoded_text:
         token = id_to_token[token_id]
-        if end_of_word_token is not None and token == end_of_word_token:
+        if end_of_word_token is not None and end_of_word_token in token:
             token = token.replace(end_of_word_token, " ")
-        else:
-            symbols.append(token)
+
+        symbols.append(token)
 
     return prepared_string.join(symbols)
 
