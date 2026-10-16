@@ -25,22 +25,22 @@ def main() -> None:
     with open("lab_2_tokenize_by_bpe/assets/en_encoded.txt", "r", encoding="utf-8") as text_file:
         translation_encoded_raw = text_file.read()
     with open("lab_2_tokenize_by_bpe/assets/secrets/secret_1.txt", "r", encoding="utf-8") as text_file:
-        secret_1 = text_file.read()
+        secret_1_raw = text_file.read()
     result = None
 
 
     #mark 4
-    result = collect_frequencies(text, start_of_word = None, end_of_word = "</s>")
-    assert result, "Frequencies not collected"
-    print(result)
+    result_4 = collect_frequencies(text, start_of_word = None, end_of_word = "</s>")
+    assert result_4, "Frequencies not collected"
+    print(result_4)
 
     #mark 6
     machine_train = train(result, 100)
     assert machine_train, "Training not working"
     vocabulary = get_vocabulary(machine_train,'<unk>')
     assert vocabulary, "Vocabulary not working"
-    secret_1 =[int(number) for number in secret_1.split()]
-    secret_1_encoded = decode(secret_1, vocabulary, '</s>')
+    secret_1_unpacked =[int(number) for number in secret_1_raw.split()]
+    secret_1_encoded = decode(secret_1_unpacked, vocabulary, '</s>')
     assert secret_1_encoded, "Decoding not working"
     print(secret_1_encoded)
 
@@ -54,8 +54,8 @@ def main() -> None:
 
     encoded_russian = encode(ru_text, vocab, "\u2581", None, "<unk>")
     assert encoded_russian, "Encoding not working"
-    result = encoded_russian
-    print(result)
+    result_8 = encoded_russian
+    print(result_8)
 
 
 
