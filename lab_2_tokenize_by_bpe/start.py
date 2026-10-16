@@ -42,6 +42,7 @@ def main() -> None:
     print(secret_1_encoded)
 
 
+
     assert result, "Translation not working"
 
 

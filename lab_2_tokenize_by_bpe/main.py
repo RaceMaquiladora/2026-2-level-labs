@@ -99,6 +99,7 @@ def count_tokens_pairs(
     if (
         not isinstance(word_frequencies, dict)
         or not all(isinstance(k, tuple) and isinstance(v, int) for k, v in word_frequencies.items())
+        or not all(isinstance(token, str) for word in word_frequencies.keys() for token in word)
     ):
         return None
 
@@ -257,8 +258,6 @@ def get_vocabulary(
     return id_tokens
 
 
-
-
 def decode(
     encoded_text: Sequence[int] | None,
     vocabulary: dict[str, int] | None,
@@ -322,6 +321,16 @@ def tokenize_word(
 
     In case of corrupt input arguments, None is returned
     """
+    if (
+        not isinstance(word, tuple)
+        or not all(isinstance(token, str) for token in word)
+        or not isinstance(vocabulary, dict)
+        or not all(isinstance(token, str) and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
+        or not isinstance(end_of_word, (str, type(None)))
+        or not isinstance(unknown_token, str)
+    ):
+        return None
+
 
 
 def load_vocabulary(vocab_path: str) -> dict[str, int] | None:
