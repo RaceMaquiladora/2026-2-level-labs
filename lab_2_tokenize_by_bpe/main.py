@@ -6,6 +6,7 @@ BPE and machine translation evaluation
 
 # pylint:disable=unused-argument
 from typing import Sequence
+import json
 
 
 def prepare_word(
@@ -304,6 +305,7 @@ def decode(
 
     return prepared_string.join(symbols)
 
+
 def tokenize_word(
     word: tuple[str, ...], vocabulary: dict[str, int], end_of_word: str | None, unknown_token: str
 ) -> list[int] | None:
@@ -326,11 +328,59 @@ def tokenize_word(
         or not all(isinstance(token, str) for token in word)
         or not isinstance(vocabulary, dict)
         or not all(isinstance(token, str) and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
-        or not isinstance(end_of_word, (str, type(None)))
+    ):
+        return None
+
+    if (
+        not isinstance(end_of_word, (str, type(None)))
         or not isinstance(unknown_token, str)
     ):
         return None
 
+
+    text = ''.join(word)
+    if end_of_word is not None and text.endswith(end_of_word) == False:
+        text = text + end_of_word
+
+    sorted_by_length_tokens = sorted(vocabulary.keys(), key=lambda x: (-len(x), x))
+
+    private_tokens = [False] * len(text)
+
+    started_tokens = [None] * len(text)
+
+    for token in sorted_by_length_tokens:
+        if token == unknown_token or token == False:
+            continue
+
+        token_length = len(token)
+
+        for i in range(len(text) - token_length + 1):
+            not_private_tokens = not any(
+                private_tokens[i + pos_token] for pos_token in range(token_length)
+            )
+            if not not_private_tokens:
+                continue
+
+            if text[i:i + token_length] != token:
+                continue
+
+            for j in range(token_length):
+                private_tokens[i + j] = True
+                started_tokens[i] = token
+
+    pos = 0
+    tokenized_word = []
+
+    while pos < len(text):
+        token = started_tokens[pos]
+        if started_tokens[pos] is not None:
+            tokenized_word.append(vocabulary[started_tokens[pos]])
+            pos += len(started_tokens[pos])
+        else:
+            tokenized_word.append(vocabulary[unknown_token])
+            pos += 1
+
+    return tokenized_word
 
 
 def load_vocabulary(vocab_path: str) -> dict[str, int] | None:
@@ -345,7 +395,17 @@ def load_vocabulary(vocab_path: str) -> dict[str, int] | None:
 
     In case of corrupt input arguments, None is returned
     """
+    if not isinstance(vocab_path, str):
+        return None
 
+    with open(vocab_path, "r", encoding="utf-8") as file:
+        vocab = file.read()
+
+    content = json.loads(vocab)
+    if not isinstance(content, dict):
+        return None
+
+    return content
 
 def encode(
     original_text: str,
@@ -370,7 +430,35 @@ def encode(
     In case of corrupt input arguments or functions used return None,
     None is returned
     """
+    if (
+        not isinstance(original_text, str)
+        or not isinstance(vocabulary, dict)
+        or not all(isinstance(token, str)
+        and isinstance(id_vocabulary, int) for token, id_vocabulary in vocabulary.items())
+    ):
+        return None
 
+    if (
+        not isinstance(start_of_word_token, (str, type(None)))
+        or not isinstance(end_of_word_token, (str, type(None)))
+        or not isinstance(unknown_token, str)
+    ):
+        return None
+
+    encoded_sequence = []
+
+    for word in original_text.split():
+        prepared_word = prepare_word(word, start_of_word_token, end_of_word_token)
+        if prepared_word is None:
+            return None
+
+        tokenized_word = tokenize_word(prepared_word, vocabulary, end_of_word_token, unknown_token)
+        if tokenized_word is None:
+            return None
+
+        encoded_sequence.extend(tokenized_word)
+
+    return encoded_sequence
 
 def collect_ngrams(text: str, order: int) -> list[tuple[str, ...]] | None:
     """
