@@ -9,7 +9,6 @@ import json
 from typing import Sequence
 
 
-
 def prepare_word(
     raw_word: str, start_of_word: str | None, end_of_word: str | None
 ) -> tuple[str, ...] | None:
