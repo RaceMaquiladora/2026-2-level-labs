@@ -348,7 +348,7 @@ def tokenize_word(
 
 
     text = ''.join(word)
-    if end_of_word is not None and text.endswith(end_of_word) == False:
+    if end_of_word is not None and not text.endswith(end_of_word):
         text = text + end_of_word
 
     sorted_by_length_tokens = sorted(vocabulary.keys(), key=lambda x: (-len(x), x))
@@ -358,16 +358,13 @@ def tokenize_word(
     started_tokens = [""] * len(text)
 
     for token in sorted_by_length_tokens:
-        if token == unknown_token or token == False:
+        if token in (unknown_token,''):
             continue
 
         token_length = len(token)
 
         for i in range(len(text) - token_length + 1):
-            not_private_tokens = not any(
-                private_tokens[i + pos_token] for pos_token in range(token_length)
-            )
-            if not not_private_tokens:
+            if any(private_tokens[i : i + token_length]):
                 continue
 
             if text[i:i + token_length] != token:
