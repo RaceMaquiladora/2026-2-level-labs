@@ -135,7 +135,8 @@ def merge_tokens(
     """
     if (
         not isinstance(word_frequencies, dict)
-        or not all(isinstance(word, tuple) and isinstance(freq, int) for word, freq in word_frequencies.items())
+        or not all(isinstance(word, tuple)
+        and isinstance(freq, int) for word, freq in word_frequencies.items())
         or not isinstance(pair, tuple) or len(pair) != 2
         or not all(isinstance(token, str) for token in pair)
     ):

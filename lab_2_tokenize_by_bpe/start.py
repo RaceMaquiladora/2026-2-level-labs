@@ -24,7 +24,11 @@ def main() -> None:
         text_reference_translation = text_file.read()
     with open("lab_2_tokenize_by_bpe/assets/en_encoded.txt", "r", encoding="utf-8") as text_file:
         translation_encoded_raw = text_file.read()
-    with open("lab_2_tokenize_by_bpe/assets/secrets/secret_1.txt", "r", encoding="utf-8") as text_file:
+    with open(
+            "lab_2_tokenize_by_bpe/assets/secrets/secret_1.txt",
+            "r",
+            encoding="utf-8"
+    ) as text_file:
         secret_1_raw = text_file.read()
     result = None
 
@@ -33,6 +37,7 @@ def main() -> None:
     result_4 = collect_frequencies(text, start_of_word = None, end_of_word = "</s>")
     assert result_4, "Frequencies not collected"
     print(result_4)
+    assert result_4, "Translation not working"
 
     #mark 6
     machine_train = train(result_4, 100)
@@ -60,7 +65,7 @@ def main() -> None:
 
 
 
-    assert result, "Translation not working"
+    assert result_8, "Translation not working"
 
 
 if __name__ == "__main__":
