@@ -6,7 +6,9 @@ BPE Tokenizer starter
 from lab_2_tokenize_by_bpe.main import (
     collect_frequencies,
     decode,
+    encode,
     get_vocabulary,
+    load_vocabulary,
     train,
 )
 
@@ -40,6 +42,20 @@ def main() -> None:
     secret_1_encoded = decode(secret_1, vocabulary, '</s>')
     assert secret_1_encoded, "Decoding not working"
     print(secret_1_encoded)
+
+    #mark 8
+    vocab = load_vocabulary("lab_2_tokenize_by_bpe/assets/vocab.json")
+
+    assert vocab, "Vocabulary not loaded"
+
+    with open("lab_2_tokenize_by_bpe/assets/ru_raw.txt", "r", encoding="utf-8") as text_file:
+        ru_text = text_file.read()
+
+    encoded_russian = encode(ru_text, vocab, "\u2581", None, "<unk>")
+    assert encoded_russian, "Encoding not working"
+    result = encoded_russian
+    print(result)
+
 
 
 
