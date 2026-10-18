@@ -25,9 +25,9 @@ def prepare_word(
 
     In case of corrupt input arguments, None is returned
     """
-    if (not all([isinstance(raw_word, str),
+    if not all([isinstance(raw_word, str),
                  isinstance(start_of_word, (str, type(None))),
-                 isinstance(end_of_word, (str, type(None)))])):
+                 isinstance(end_of_word, (str, type(None)))]):
         return None
 
     prepared_words = []
@@ -61,9 +61,9 @@ def collect_frequencies(
     In case of corrupt input arguments or functions used return None,
     None is returned
     """
-    if (not all([isinstance(text, str),
+    if not all([isinstance(text, str),
                  isinstance(start_of_word, (str, type(None))),
-                 isinstance(end_of_word, str,)])):
+                 isinstance(end_of_word, str)]):
         return None
 
     word_frequencies = {}
@@ -216,7 +216,7 @@ def train(
 
         word_frequencies = sorted_word_frequencies
 
-    return sorted_word_frequencies
+    return word_frequencies
 
 
 def get_vocabulary(
@@ -348,7 +348,7 @@ def tokenize_word(
 
 
     text = ''.join(word)
-    if end_of_word is not None and text.endswith(end_of_word) is  False:
+    if end_of_word is not None and not text.endswith(end_of_word):
         text = text + end_of_word
 
     sorted_by_length_tokens = sorted(vocabulary.keys(), key=lambda x: (-len(x), x))
@@ -358,7 +358,7 @@ def tokenize_word(
     started_tokens = [None] * len(text)
 
     for token in sorted_by_length_tokens:
-        if token == unknown_token or token is False:
+        if token == unknown_token:
             continue
 
 
