@@ -355,7 +355,7 @@ def tokenize_word(
 
     private_tokens = [False] * len(text)
 
-    started_tokens = [None] * len(text)
+    started_tokens = [""] * len(text)
 
     for token in sorted_by_length_tokens:
         if token == unknown_token:
@@ -381,7 +381,7 @@ def tokenize_word(
 
     while pos < len(text):
         current_token = started_tokens[pos]
-        if current_token is not None:
+        if current_token:
             tokenized_word.append(vocabulary[current_token])
             pos += len(current_token)
         else:
