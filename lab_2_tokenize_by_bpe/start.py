@@ -3,6 +3,7 @@ BPE Tokenizer starter
 """
 
 from lab_2_tokenize_by_bpe.main import (
+    calculate_bleu,
     collect_frequencies,
     decode,
     encode,
@@ -61,11 +62,23 @@ def main() -> None:
     assert encoded_russian, "Encoding not working"
     result_8 = encoded_russian
     print(result_8)
-
-
-
-
     assert result_8, "Translation not working"
+
+    #mark 10
+
+    translation_encoded = [int(x) for x in translation_encoded_raw.split()]
+
+
+    translation_decoded = decode(translation_encoded, vocab, None)
+    translation_decoded = translation_decoded.replace("\u2581",'')
+
+    bleu_calculated = calculate_bleu(translation_decoded, text_reference_translation)
+
+
+    print("Итог: ", translation_decoded)
+    print('Эталон: ', text_reference_translation)
+    print('BLEU: ', bleu_calculated)
+
 
 
 if __name__ == "__main__":
