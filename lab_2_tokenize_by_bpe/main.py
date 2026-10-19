@@ -568,7 +568,7 @@ def calculate_geo_mean(precisions: Sequence[float], max_order: int) -> float | N
     ):
         return None
 
-    sum_log = 0
+    sum_log = 0.0
     if any(p <= 0 for p in precisions):
         return 0.0
 

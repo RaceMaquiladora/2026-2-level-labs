@@ -2,7 +2,7 @@
 BPE Tokenizer starter
 """
 
-# pylint:disable=too-many-locals, unused-variable
+
 from lab_2_tokenize_by_bpe.main import (
     calculate_bleu,
     collect_frequencies,
@@ -12,7 +12,7 @@ from lab_2_tokenize_by_bpe.main import (
     load_vocabulary,
     train,
 )
-
+# pylint:disable=too-many-locals, unused-variable
 
 
 def main() -> None:
