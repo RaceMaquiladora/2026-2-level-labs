@@ -5,7 +5,7 @@ BPE and machine translation evaluation
 """
 
 import json
-from math import *
+from math import exp, log
 
 # pylint:disable=unused-argument
 from typing import Sequence
