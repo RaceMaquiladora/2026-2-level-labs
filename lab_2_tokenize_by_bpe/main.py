@@ -562,7 +562,7 @@ def calculate_geo_mean(precisions: Sequence[float], max_order: int) -> float | N
     """
     if (
         not isinstance(precisions, Sequence)
-        or len(precisions) == 0
+        or len(precisions) == 0.0
         or not all(isinstance(p, (int,float)) for p in precisions)
         or not isinstance(max_order, int)
     ):
