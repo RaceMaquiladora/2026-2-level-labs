@@ -4,9 +4,6 @@ Lab 2.
 BPE and machine translation evaluation
 """
 
-import json
-from math import exp, log
-
 # pylint:disable=unused-argument
 import json
 import math
