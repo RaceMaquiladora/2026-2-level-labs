@@ -5,6 +5,7 @@ Beam-search and natural language generation evaluation
 """
 
 # pylint:disable=too-few-public-methods
+import math
 
 
 class TextProcessor:
@@ -521,6 +522,8 @@ class BeamSearcher:
             beam_width (int): Number of candidates to consider at each step
             language_model (NGramLanguageModel): A language model to use for next token prediction
         """
+        self._beam_width = beam_width
+        self._model = language_model
 
     def get_next_token(self, sequence: tuple[int, ...]) -> list[tuple[int, float]] | None:
         """
@@ -539,6 +542,21 @@ class BeamSearcher:
 
         In case of corrupt input arguments or methods used return None.
         """
+        if not isinstance(sequence, tuple):
+            return None
+        if not all(isinstance(el, int) and not isinstance(el, bool) for el in sequence):
+            return None
+
+        possible_tokens = self._model.generate_next_token(sequence)
+        if possible_tokens is None:
+            return None
+
+        if not possible_tokens:
+            return []
+
+        possible_tokens_list = list(possible_tokens.items())
+        possible_tokens_list.sort(key=lambda x: (-x[1], -x[0]))
+        return possible_tokens_list[:self._beam_width]
 
     def continue_sequence(
         self,
@@ -562,6 +580,31 @@ class BeamSearcher:
 
         In case of corrupt input arguments or unexpected behaviour of methods used return None.
         """
+        if not isinstance(sequence, tuple):
+            return None
+        if not all(isinstance(el, int) and not isinstance(el, bool) for el in sequence):
+            return None
+        if not isinstance(next_tokens, list):
+            return None
+        if not all(isinstance(el, tuple) and len(el) == 2 for el in next_tokens):
+            return None
+        if not isinstance(sequence_candidates, dict):
+            return None
+
+        possible_tokens = sequence_candidates[::]
+
+        current_probability = possible_tokens.get(sequence)
+        if current_probability is None:
+            return None
+
+        for token, ability in next_tokens:
+            new_sequence = sequence + (token,)
+            possible_tokens[new_sequence] = current_probability - math.log(ability)
+
+        possible_tokens.remove(sequence)
+
+        return possible_tokens
+
 
     def prune_sequence_candidates(
         self, sequence_candidates: dict[tuple[int, ...], float]
