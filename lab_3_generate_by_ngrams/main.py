@@ -49,29 +49,30 @@ class TextProcessor:
         if not isinstance(text, str):
             return None
 
-        words = text.lower().split()
-        if not words:
+        words_in_text = text.lower()
+        words_in_text = words_in_text.split()
+        if not words_in_text:
             return None
 
         tokens = []
 
-        for word in words[:-1]:
-            letters = [c for c in word if c.isalpha()]
-
+        for word in words_in_text[:-1]:
+            letters = [x for x in word if x.isalpha()]
             if letters:
                 tokens.extend(letters)
                 tokens.append(self._end_of_word_token)
 
-        last_word = words[-1]
-        last_letters = [c for c in last_word if c.isalpha()]
-
+        last_word = words_in_text[-1]
+        last_letters = [x for x in last_word if x.isalpha()]
         if last_letters:
             tokens.extend(last_letters)
-
             if not text[-1].isalpha():
                 tokens.append(self._end_of_word_token)
 
-        return tuple(tokens) if tokens else None
+        if not tokens:
+            return None
+        else:
+            return tuple(tokens)
 
     def get_id(self, element: str) -> int | None:
         """
