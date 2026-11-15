@@ -3,8 +3,12 @@ Generation by NGrams starter
 """
 
 # pylint:disable=too-many-locals, unused-import, unused-variable
-from lab_3_generate_by_ngrams.main import GreedyTextGenerator, NGramLanguageModel, TextProcessor, BeamSearchTextGenerator
-
+from lab_3_generate_by_ngrams.main import (
+    BeamSearchTextGenerator,
+    GreedyTextGenerator,
+    NGramLanguageModel,
+    TextProcessor
+)
 
 def main() -> None:
     """
@@ -22,12 +26,12 @@ def main() -> None:
     text_processor = TextProcessor("_")
 
     encoded_corpus = text_processor.encode(text)
-    print (f"Encoded text (100 numbers):\n {encoded_corpus[:100]}")
     assert encoded_corpus, "Text can not be encoded"
+    print (f"Encoded text (100 numbers):\n {encoded_corpus[:100]}")
 
     decoded_corpus = text_processor.decode(encoded_corpus)
-    print (f"Decoded text (150 chars):\n {decoded_corpus[:150]}")
     assert decoded_corpus, "Text can not be decoded"
+    print (f"Decoded text (150 chars):\n {decoded_corpus[:150]}")
 
     #mark 6
     language_model = NGramLanguageModel(encoded_corpus, n_gram_size=7)

@@ -24,9 +24,6 @@ class TextProcessor:
         Args:
             end_of_word_token (str): A token denoting word boundary
         """
-        if not isinstance(end_of_word_token, str):
-                return None
-
         self._end_of_word_token = end_of_word_token
         self._storage = {end_of_word_token: 0}
 
@@ -50,8 +47,7 @@ class TextProcessor:
         if not isinstance(text, str):
             return None
 
-        words_in_text = text.lower()
-        words_in_text = words_in_text.split()
+        words_in_text = text.lower().split()
         if not words_in_text:
             return None
 
@@ -72,8 +68,8 @@ class TextProcessor:
 
         if not tokens:
             return None
-        else:
-            return tuple(tokens)
+
+        return tuple(tokens)
 
     def get_id(self, element: str) -> int | None:
         """
@@ -120,6 +116,8 @@ class TextProcessor:
         for token, token_id in self._storage.items():
             if token_id == element_id:
                 return token
+        return None
+
 
     def encode(self, text: str) -> tuple[int, ...] | None:
         """
@@ -149,7 +147,10 @@ class TextProcessor:
 
         result = [self.get_id(t) for t in tokens]
 
-        return tuple(result) if None not in result else None
+        if None in result:
+            return None
+
+        return tuple(token_id for token_id in result if token_id is not None)
 
     def _put(self, element: str) -> None:
         """
@@ -163,8 +164,6 @@ class TextProcessor:
         """
         if not isinstance(element, str) or len(element) != 1:
             return None
-
-        id = self._storage.get(element)
 
         if element not in self._storage:
             if element == self._end_of_word_token:
@@ -581,11 +580,11 @@ class BeamSearcher:
         In case of corrupt input arguments or unexpected behaviour of methods used return None.
         """
         if (
-                not isinstance(sequence, tuple)
-                or not sequence
-                or not all(isinstance(token, int) for token in sequence)
-            ):
-                return None
+            not isinstance(sequence, tuple)
+            or not sequence
+            or not all(isinstance(token, int) for token in sequence)
+        ):
+            return None
 
         if (
             not isinstance(next_tokens, list)
