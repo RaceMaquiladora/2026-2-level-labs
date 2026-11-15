@@ -3,7 +3,7 @@ Generation by NGrams starter
 """
 
 # pylint:disable=too-many-locals, unused-import, unused-variable
-from main import GreedyTextGenerator, NGramLanguageModel, TextProcessor
+from lab_3_generate_by_ngrams.main import GreedyTextGenerator, NGramLanguageModel, TextProcessor, BeamSearchTextGenerator
 
 
 def main() -> None:
@@ -16,8 +16,7 @@ def main() -> None:
         "./lab_3_generate_by_ngrams/assets/Harry_Potter.txt", "r", encoding="utf-8"
     ) as text_file:
         text = text_file.read()
-    # result = None
-    # assert result
+
 
     #mark 4
     text_processor = TextProcessor("_")
@@ -39,8 +38,13 @@ def main() -> None:
     generator = GreedyTextGenerator(language_model, text_processor)
     result = generator.run(prompt="Vernon", seq_len=51)
     print (f"Generated text:\n {result}")
-    #result = None
-    #assert result
+    assert result, "Text can not be generated"
+
+    #mark 8
+    beam_generator = BeamSearchTextGenerator(language_model, text_processor, beam_width=7)
+    result = beam_generator.run(prompt="Vernon", seq_len=56)
+    print (f"Generated text with beam search:\n {result}")
+    assert result, "Text can not be generated with beam search"
 
 if __name__ == "__main__":
     main()

@@ -581,48 +581,49 @@ class BeamSearcher:
         In case of corrupt input arguments or unexpected behaviour of methods used return None.
         """
         if (
-        not isinstance(sequence, tuple)
-        or not isinstance(next_tokens, list)
-        or not isinstance(sequence_candidates, dict)
-        or not sequence
+                not isinstance(sequence, tuple)
+                or not sequence
+                or not all(isinstance(token, int) for token in sequence)
+            ):
+                return None
+
+        if (
+            not isinstance(next_tokens, list)
+            or not next_tokens
+            or len(next_tokens) > self._beam_width
+            or not all(
+                isinstance(item, tuple)
+                and len(item) == 2
+                and isinstance(item[0], int)
+                and isinstance(item[1], (int, float))
+                for item in next_tokens
+            )
         ):
             return None
 
         if (
-        not all(isinstance(el, int) and not isinstance(el, bool) for el in sequence)
-        or not all(isinstance(el, tuple) and len(el) == 2 for el in next_tokens)
-        or not all(isinstance(k, tuple) and isinstance(v, float) for k, v in sequence_candidates.items())
+            not isinstance(sequence_candidates, dict)
+            or sequence not in sequence_candidates
+            or not all(
+                isinstance(seq, tuple)
+                and all(isinstance(token, int) for token in seq)
+                and isinstance(penalty, (int, float))
+                for seq, penalty in sequence_candidates.items()
+            )
         ):
             return None
 
-        if not all(isinstance(el, int) and not isinstance(el, bool) for el in sequence):
-            return None
-        if not isinstance(next_tokens, list):
-            return None
-        if not all(isinstance(el, tuple) and len(el) == 2 for el in next_tokens):
-            return None
-        if not isinstance(sequence_candidates, dict):
-            return None
-        if not all(isinstance(k, tuple) and isinstance(v, float) for k, v in sequence_candidates.items()):
-            return None
-        if not sequence_candidates:
-            return None
-        if sequence not in sequence_candidates:
-            return None
+        new_candidates = sequence_candidates.copy()
+        current_penalty = new_candidates[sequence]
 
-        possible_tokens = sequence_candidates[::]
+        for token, probability in next_tokens:
 
-        current_probability = possible_tokens.get(sequence)
-        if current_probability is None:
-            return None
-
-        for token, ability in next_tokens:
             new_sequence = sequence + (token,)
-            possible_tokens[new_sequence] = current_probability - math.log(ability)
+            new_candidates[new_sequence] = current_penalty - math.log(probability)
 
-        possible_tokens.remove(sequence)
+        new_candidates.pop(sequence)
 
-        return possible_tokens
+        return new_candidates
 
 
     def prune_sequence_candidates(
@@ -639,11 +640,35 @@ class BeamSearcher:
 
         In case of corrupt input arguments return None.
         """
-        if not isinstance(sequence_candidates, dict):
-            return None
-        if not all(isinstance(k, tuple) and isinstance(v, float) for k, v in sequence_candidates.items()):
+        if (
+        not isinstance(sequence_candidates, dict)
+        or self._beam_width <= 0
+        or not all(
+            isinstance(sequence, tuple)
+            and all(isinstance(token, int) for token in sequence)
+            and isinstance(penalty, (int, float))
+            for sequence, penalty in sequence_candidates.items()
+            )
+        ):
             return None
 
+        if not sequence_candidates:
+            return None
+
+        sorted_sequences = sorted(
+            sequence_candidates,
+            key=lambda sequence: (
+                sequence_candidates[sequence],
+                tuple(-token for token in sequence)
+            )
+        )
+
+        pruned_candidates = {
+            sequence: sequence_candidates[sequence]
+            for sequence in sorted_sequences[:self._beam_width]
+        }
+
+        return pruned_candidates
 
 
 
@@ -691,6 +716,41 @@ class BeamSearchTextGenerator:
         if not isinstance(prompt, str) or not isinstance(seq_len, int) or seq_len <= 0:
             return None
 
+        starting_sequence = self._text_processor.encode(prompt)
+        if starting_sequence is None:
+            return None
+
+        possible_sequences = {starting_sequence: 0.0}
+
+        for _ in range(seq_len):
+            new_possible_sequences = possible_sequences.copy()
+
+            for sequence in possible_sequences:
+                next_tokens = self._get_next_token(sequence)
+
+                if next_tokens is None:
+                    return None
+
+                new_sequences = self.beam_searcher.continue_sequence(
+                    sequence, next_tokens, new_possible_sequences
+                )
+                if new_sequences is not None:
+                    new_possible_sequences = new_sequences
+
+
+            if not new_possible_sequences:
+                return None
+
+
+            cut_sequences = self.beam_searcher.prune_sequence_candidates(new_possible_sequences)
+            if cut_sequences is None:
+                return None
+
+            possible_sequences = cut_sequences
+
+        best_sequence = min(possible_sequences, key = lambda x: possible_sequences[x])
+        return self._text_processor.decode(best_sequence)
+
     def _get_next_token(
         self, sequence_to_continue: tuple[int, ...]
     ) -> list[tuple[int, float]] | None:
@@ -708,9 +768,12 @@ class BeamSearchTextGenerator:
         """
         if not isinstance(sequence_to_continue, tuple):
             return None
-        if not all(isinstance(el, int) and not isinstance(el, bool) for el in sequence_to_continue):
+        if not all(isinstance(el, int) for el in sequence_to_continue):
+            return None
+        if not sequence_to_continue:
             return None
 
+        return self.beam_searcher.get_next_token(sequence_to_continue)
 
 
 class NGramLanguageModelReader:
