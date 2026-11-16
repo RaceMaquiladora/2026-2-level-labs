@@ -5,7 +5,6 @@ Beam-search and natural language generation evaluation
 """
 
 # pylint:disable=too-few-public-methods
-import math
 
 import json
 import math
@@ -249,22 +248,6 @@ class TextProcessor:
             decoded_corpus.append(el)
 
         return tuple(decoded_corpus)
-
-        if not isinstance(corpus, tuple) or not corpus:
-            return None
-
-        if not all(isinstance(el, int) and not isinstance(el, bool) for el in corpus):
-            return None
-
-        result = []
-
-        for el in corpus:
-            token = self.get_token(el)
-            if token is None:
-                return None
-            result.append(token)
-
-        return tuple(result)
 
     def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
