@@ -45,6 +45,11 @@ class Sentence:
             text (str): Text of the sentence.
             position (int): Position of the sentence in the text.
         """
+        if not isinstance(text, str):
+            raise IncorrectArgumentError("Text must be a string.")
+        if not isinstance(position, int):
+            raise IncorrectArgumentError("Position must be an integer.")
+
         self._text = text
         self._position = position
         self._preprocessed = ()
@@ -77,6 +82,7 @@ class Sentence:
         Returns:
             str: String representation of the sentence.
         """
+        return f"Sentence(text={self._text}, position={self._position})"
 
     def get_encoded(self) -> EncodedSentence:
         """
@@ -170,6 +176,16 @@ class SentencePreprocessor:
             stop_words (Sequence[str]): Insignificant words to remove from tokens.
             punctuation (Sequence[str]): Punctuation symbols to remove during text cleaning.
         """
+        if not isinstance(stop_words, Sequence) or not all(isinstance(word, str) for word in stop_words):
+            raise IncorrectArgumentError(
+                "Stop words must be a sequence of strings."
+            )
+        if not isinstance(punctuation, Sequence) or not all(isinstance(symbol, str) for symbol in punctuation):
+            raise IncorrectArgumentError(
+                "Punctuation must be a sequence of strings."
+            )
+        self._stop_words = stop_words
+        self._punctuation = punctuation
 
     def __str__(self) -> str:
         """
@@ -178,6 +194,7 @@ class SentencePreprocessor:
         Returns:
             str: String representation of the preprocessor.
         """
+        return f"SentencePreprocessor(stop_words={self._stop_words}, punctuation={self._punctuation})"
 
     def _clean_and_tokenize(self, text: str) -> tuple[str, ...]:
         """
@@ -219,6 +236,27 @@ class SentencePreprocessor:
         Returns:
             tuple[Sentence, ...]: Sequence of sentences extracted from the text.
         """
+        if not isinstance(text, str):
+            raise IncorrectArgumentError("Input text must be a string.")
+
+        sentences = []
+        changed_text =' '.join(text.split())
+        counter = 0
+
+        for pos in range(len(changed_text)-1):
+            if (
+                changed_text[pos] in '.!?'
+                and changed_text[pos+1] == ' '
+                and changed_text[pos+2:pos+3].isupper()
+            ):
+                sentences.append(changed_text[counter:pos+1].strip())
+                counter = pos + 2
+
+        if counter < len(changed_text):
+            sentences.append(changed_text[counter:].strip())
+
+
+        return tuple(Sentence(sentence, index) for index, sentence in enumerate(sentences))
 
     def get_sentences(self, text: str) -> tuple[Sentence, ...]:
         """
