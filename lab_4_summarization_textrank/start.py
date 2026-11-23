@@ -8,6 +8,7 @@ from lab_4_summarization_textrank.main import (
     SentencePreprocessor,
 )
 
+
 def main() -> None:
     """
     Launches an implementation.
@@ -25,7 +26,7 @@ def main() -> None:
     result = None
 
     # mark 6
-    preprocessor = SentencePreprocessor(stop_words, punctation = True)
+    preprocessor = SentencePreprocessor(stop_words, punctuation=tuple(".,!?;:()[]{}\"'"))
     sentences = preprocessor.get_sentences(text)
     encoder = SentenceEncoder()
     encoder.encode_sentences(sentences)
