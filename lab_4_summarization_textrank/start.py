@@ -30,8 +30,10 @@ def main() -> None:
     sentences = preprocessor.get_sentences(text)
     encoder = SentenceEncoder()
     encoder.encode_sentences(sentences)
-
-    assert result
+    print(f"Encoded sentences: {sentences}")
+    print(f"Encoder: {encoder}")
+    print(f"Vocabulary size: {len(encoder._word2id)}")
+    assert encoder
 
 
 if __name__ == "__main__":
