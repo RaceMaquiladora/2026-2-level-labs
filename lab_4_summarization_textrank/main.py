@@ -321,6 +321,9 @@ class SentenceEncoder:
         """
         Initializes the sentence encoder.
         """
+        self._word2id = {}
+        self._id2word = {}
+        self.last = 999
 
     def __str__(self) -> str:
         """
@@ -329,6 +332,7 @@ class SentenceEncoder:
         Returns:
             str: String representation of the encoder.
         """
+        return f"SentenceEncoder(vocabulary_size={len(self._word2id)})"
 
     def _learn_indices(self, tokens: Sequence[str]) -> None:
         """
@@ -337,6 +341,14 @@ class SentenceEncoder:
         Args:
             tokens (Sequence[str]): Sequence of string tokens.
         """
+        if not isinstance(tokens, Sequence) or not all(isinstance(token, str) for token in tokens):
+            raise IncorrectArgumentError("Tokens must be a sequence of strings.")
+
+        for token in tokens:
+            if token not in self._word2id:
+                self.last += 1
+                self._word2id[token] = self.last
+                self._id2word[self.last] = token
 
     def encode_sentences(self, sentences: Sequence[Sentence]) -> None:
         """
@@ -345,6 +357,13 @@ class SentenceEncoder:
         Args:
             sentences (Sequence[Sentence]): Sequence of sentences to encode.
         """
+        if not isinstance(sentences, Sequence) or not all(isinstance(sentence, Sentence) for sentence in sentences):
+            raise IncorrectArgumentError("Sentences must be a sequence of Sentences.")
+
+        for sentence in sentences:
+            self._learn_indices(sentence.get_preprocessed())
+            encoded_tokens = tuple(self._word2id[token] for token in sentence.get_preprocessed())
+            sentence.set_encoded(encoded_tokens)
 
 
 def calculate_similarity(sequence: Sequence, other_sequence: Sequence) -> float:
